@@ -1,18 +1,18 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
+import Home from '../components/Home/Home';
 
-const Home: NextPage = () => {
+
+const HomePage = () => {
   return (
     <div>
       <Head>
-        <title>Evernote</title>
+        <title>Best Note Taking App - Organize Your Notes with Evernote</title>
         <meta name="description" content="A note taking app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Link href="/client">Go To Notes</Link>
+      <Home/>
     </div>
   )
 }
 
-export default Home
+export default HomePage

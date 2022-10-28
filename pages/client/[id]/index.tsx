@@ -2,56 +2,81 @@ import Note from "../../../components/Note/Note";
 import NoteList from "../../../components/NoteList/NoteList";
 import Sidenavbar from "../../../components/Sidenavbar/Sidenavbar";
 import styles from "../../../styles/Client.module.scss";
-import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebaseConfig";
-import { Notes } from "../../../types";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { User } from "../../../types";
+import { GetServerSideProps } from "next";
+import { useState } from "react";
 
-type HomeProps = {
-  notes: Notes[];
-  note: Notes;
+type UserProps = {
+  user: User;
+  userId: string;
 };
 
-const NoteDetails = ({ notes, note }: HomeProps) => {
+const NoteDetails = ({ user, userId }: UserProps) => {
+  const [notes, setNotes] = useState(user.notes);
+  const [id, setId] = useState("1");
+  const [title, setTitle] = useState(notes[0].title);
+  const [description, setDescription] = useState(notes[0].description);
+  const userRef = doc(database, "users", userId);
+
+  const viewNote = async (ID: string) => {
+    const newNotes = notes.map((obj) => {
+      if (obj.id === id) {
+        return { ...obj, title: title, description: description };
+      }
+      return obj;
+    });
+    setNotes(newNotes);
+    const index = newNotes.findIndex((obj) => {
+      return obj.id === ID;
+    });
+    console.log(index);
+    setId(ID);
+    setTitle(notes[index].title);
+    setDescription(notes[index].description);
+    await updateDoc(userRef, {
+      notes: notes,
+    });
+  };
+
+  const addNewNote = async () => {
+    setNotes((notes) => [
+      { id: `${notes.length + 1}`, title: "Untitled", description: "" },
+      ...notes,
+    ]);
+    await updateDoc(userRef, {
+      notes: notes,
+    });
+  };
+
   return (
     <div className={styles.container}>
-      <Sidenavbar notes={notes}/>
-      <NoteList notes={notes} />
-      <Note note={note}/>
+      <Sidenavbar user={user} addNewNote={addNewNote} />
+      <NoteList notes={notes} viewNote={viewNote} title={title} id={id} />
+      <Note
+        title={title}
+        setTitle={setTitle}
+        description={description}
+        setDescription={setDescription}
+      />
     </div>
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const dbInstance = collection(database, "notes");
-  let data = await getDocs(dbInstance);
-  return {
-    fallback: "blocking",
-    paths: data.docs.map((item) => ({
-      params: { id: item.id },
-    })),
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const noteId = params?.id as string;
-  const docRef = doc(database, "notes", noteId);
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const userId = params?.id as string;
+  const docRef = doc(database, "users", userId);
   const docSnap = await getDoc(docRef);
-  const dbInstance = collection(database, "notes");
-  let data = await getDocs(dbInstance);
 
   return {
     props: {
-      notes: data.docs.map((item) => ({
-        id: item.id,
-        noteTitle: item.data().noteTitle,
-        noteDesc: item.data().noteDesc,
-      })),
-      note: {
-        id: noteId,
-        noteTitle: docSnap.data()?.noteTitle,
-        noteDesc: docSnap.data()?.noteDesc,
+      user: {
+        name: docSnap.data()?.name,
+        email: docSnap.data()?.email,
+        notes: docSnap.data()?.notes,
       },
+      userId,
     },
   };
 };

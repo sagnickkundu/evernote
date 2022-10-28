@@ -1,0 +1,181 @@
+.top {
+  .row {
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    height: 80px;
+    position: relative;
+    margin: 0 auto;
+    .logo {
+      position: relative;
+      display: inline-block;
+      height: 40px;
+      width: 177px;
+      margin-left: 0.5rem;
+    }
+
+    .topNav {
+      display: inline-block;
+      margin-left: 30px;
+      margin-top: 24px;
+      vertical-align: top;
+      ul {
+        list-style: none;
+        line-height: 31px;
+        li {
+          display: inline-block;
+          margin-left: 20px;
+          padding-bottom: 24px;
+          position: relative;
+          &:first-child {
+            margin-left: 0;
+          }
+          a {
+            font-family: "Times New Roman", Times, serif;
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            &:hover {
+              color: #00a82d;
+              transition: 0.1s color ease-in-out;
+            }
+          }
+        }
+      }
+    }
+
+    .utilityNav {
+      display: inline-block;
+      margin-left: auto;
+      ul {
+        list-style: none;
+        line-height: 21px;
+        font-size: 13px;
+        li {
+          display: inline-block;
+          font-size: 14px;
+          margin: 0 5px;
+          position: relative;
+          vertical-align: middle;
+          a {
+            color: black;
+            font-size: 16px;
+            &:visited {
+              text-decoration: none;
+            }
+            &:hover {
+              color: #00a82d;
+            }
+          }
+          .downloadBtn {
+            color: #00a82d;
+            border: 2px solid #00a82d;
+            border-radius: 3px;
+            display: inline-block;
+            height: 40px;
+            min-width: 120px;
+            padding: 0 10px;
+            text-align: center;
+            text-decoration: none;
+            background-color: inherit;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+.hero {
+  padding-top: 30px;
+  .row {
+    padding: 0;
+    margin: 0 auto;
+    max-width: 1220px;
+    .content {
+      text-align: center;
+      .valueProp {
+        text-align: center;
+        max-width: 80%;
+        margin: 0 auto;
+        padding-bottom: 30px;
+        h1 {
+          padding-bottom: 10px;
+          font-size: 56px;
+          font-family: "Soleil_Medium", Helvetica, Arial, sans-serif;
+          line-height: 150%;
+        }
+        .description {
+          font-family: "Soleil", Helvetica, Arial, sans-serif;
+          font-size: 24px;
+          font-weight: normal;
+          line-height: 40px;
+          padding-bottom: 30px;
+        }
+
+        .cta {
+          padding-bottom: 20px;
+          .btnPrimary {
+            font-size: 16px;
+            padding: 16px 80px;
+            background: #00a82d;
+            border: 0;
+            border-radius: 3px;
+            color: white;
+            display: inline-block;
+            letter-spacing: 1.5px;
+            line-height: 1;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.3s background ease-in-out;
+            cursor: pointer;
+            &:hover {
+              background: #14cc45;
+              transition: 0.1s background ease-in-out;
+            }
+          }
+        }
+
+        .loginCta {
+          font-size: 18px;
+          text-decoration: underline;
+        }
+      }
+
+      .heroRow {
+        display: flex;
+        .imgContainer {
+          width: 84%;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          margin: 0 auto;
+        }
+        .carouselContainer {
+          width: 16%;
+          min-width: 240px;
+          display: flex;
+          align-items: center;
+          .carouselTexts{
+            text-align: left;
+            .text{
+              padding-bottom: 20px;
+              .heading p{
+                padding-bottom: 10px;
+                font-size: 18px;
+                letter-spacing: 1px;
+                line-height: 150%;
+              }
+              .description p{
+                font-size: 16px;
+                letter-spacing: 0;
+                line-height: 150%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArchive,
-  faBackward,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { Dispatch, SetStateAction } from "react";
 import styles from "./Note.module.scss";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
-import { Notes } from "../../types";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -27,21 +20,15 @@ const modules = {
   ],
 };
 type NoteProps = {
-  note: Notes;
+  title: string;
+  setTitle: Dispatch<SetStateAction<string>>;
+  description: string;
+  setDescription: Dispatch<SetStateAction<string>>;
 }
-const Note = ({note}: NoteProps) => {
-  const [isArchive, setIsArchive] = useState(1);
-  const [title, setTitle] = useState(note.noteTitle);
-  const [desc, setDesc] = useState(note.noteDesc);
+const Note = ({title, setTitle, description, setDescription}: NoteProps) => {
   const handleChange = (html: string) => {
-    console.log(html);
-    setDesc(html);
+    setDescription(html);
   }
-
-  useEffect(() => {
-    setTitle(note.noteTitle);
-    setDesc(note.noteDesc)
-  },[note])
   
   return (
     <div className={styles.container}>
@@ -49,10 +36,10 @@ const Note = ({note}: NoteProps) => {
       <div className={styles.body}>
         <div className={styles.reactQuill}>
           <ReactQuill
-            modules={modules}
+            // modules={modules}
             theme="snow"
             placeholder="Start writing, drag files or start from a template"
-            value={desc}
+            value={description}
             onChange={handleChange}
           />
         </div>
