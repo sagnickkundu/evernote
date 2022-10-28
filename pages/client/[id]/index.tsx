@@ -16,8 +16,8 @@ type UserProps = {
 const NoteDetails = ({ user, userId }: UserProps) => {
   const [notes, setNotes] = useState(user.notes);
   const [id, setId] = useState("1");
-  const [title, setTitle] = useState(notes[0].title);
-  const [description, setDescription] = useState(notes[0].description);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const userRef = doc(database, "users", userId);
 
   const viewNote = async (ID: string) => {
@@ -31,7 +31,6 @@ const NoteDetails = ({ user, userId }: UserProps) => {
     const index = newNotes.findIndex((obj) => {
       return obj.id === ID;
     });
-    console.log(index);
     setId(ID);
     setTitle(notes[index].title);
     setDescription(notes[index].description);
@@ -50,6 +49,16 @@ const NoteDetails = ({ user, userId }: UserProps) => {
     });
   };
 
+  const deleteNote = async () => {
+    const newNotes = notes.filter((obj) => obj.id !== id);
+    setNotes(newNotes);
+    setTitle(newNotes[0]?.title);
+    setDescription(newNotes[0]?.description);
+    await updateDoc(userRef, {
+      notes: newNotes,
+    });
+  }
+
   return (
     <div className={styles.container}>
       <Sidenavbar user={user} addNewNote={addNewNote} />
@@ -59,6 +68,8 @@ const NoteDetails = ({ user, userId }: UserProps) => {
         setTitle={setTitle}
         description={description}
         setDescription={setDescription}
+        name={user.name}
+        deleteNote={deleteNote}
       />
     </div>
   );

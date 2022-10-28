@@ -3,14 +3,30 @@ import styles from "./Registration.module.scss";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { addDoc, collection } from "firebase/firestore";
+import { database } from "../../firebaseConfig";
 const Registration = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-
-  const handleSubmit = () => {
-    console.log(email + " " + password);
-    router.push("/client");
+  const dbInstance = collection(database, "users");
+  const handleSubmit = async () => {
+    let newUser = {
+      name: name,
+      email: email,
+      password: password,
+      notes: [
+        {
+          id: "1",
+          title: "Untitled",
+          description: "",
+        },
+      ],
+    };
+    await addDoc(dbInstance, newUser).then((docRef) => {
+      router.push(`/client/${docRef.id}`);
+    });
   };
   return (
     <div className={styles.container}>
@@ -18,6 +34,13 @@ const Registration = () => {
         <Image src="/evernote-icon.svg" alt="" width={55} height={55} />
         <div className={styles.title}>Evernote</div>
         <p>Remember everything important</p>
+        <input
+          type="text"
+          className={styles.input}
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <input
           type="email"
           className={styles.input}

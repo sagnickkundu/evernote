@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction } from "react";
 import styles from "./Note.module.scss";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -15,7 +17,6 @@ const modules = {
     ["blockquote", "code-block"],
     [{ list: "ordered" }, { list: "bullet" }],
     [{ indent: "-1" }, { indent: "+1" }, { align: [] }],
-    ["link", "image", "video"],
     ["clean"],
   ],
 };
@@ -24,19 +25,33 @@ type NoteProps = {
   setTitle: Dispatch<SetStateAction<string>>;
   description: string;
   setDescription: Dispatch<SetStateAction<string>>;
-}
-const Note = ({title, setTitle, description, setDescription}: NoteProps) => {
+  name: string;
+  deleteNote(): void;
+};
+const Note = ({
+  title,
+  setTitle,
+  description,
+  setDescription,
+  name,
+  deleteNote
+}: NoteProps) => {
+
   const handleChange = (html: string) => {
     setDescription(html);
-  }
-  
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.header}>shaggy notebook</div>
+      <div className={styles.header}>
+        <div className={styles.notebook}>{name.split(" ")[0]} notebook</div>
+        <div className={styles.deleteBtn} onClick={() => deleteNote()} ><FontAwesomeIcon className={styles.icon} icon={faTrash} /></div>
+      </div>
+
       <div className={styles.body}>
         <div className={styles.reactQuill}>
           <ReactQuill
-            // modules={modules}
+            modules={modules}
             theme="snow"
             placeholder="Start writing, drag files or start from a template"
             value={description}
