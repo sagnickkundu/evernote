@@ -1,0 +1,21 @@
+{
+  "hosting": {
+    "public": "public",
+    "site": "evernote-clone-aa8ee",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextServer"
+      }
+    ]
+  },
+  "functions": {
+    "source": ".",
+    "runtime": "nodejs16"
+  }
+}

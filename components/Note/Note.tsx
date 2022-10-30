@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState, useRef, useEffect } from "react";
 import styles from "./Note.module.scss";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
@@ -27,46 +27,50 @@ type NoteProps = {
   setDescription: Dispatch<SetStateAction<string>>;
   name: string;
   deleteNote(): void;
+  visible: boolean;
 };
-const Note = ({
-  title,
-  setTitle,
-  description,
-  setDescription,
-  name,
-  deleteNote
-}: NoteProps) => {
+const Note = ({ title, setTitle, name, deleteNote, visible, description, setDescription }: NoteProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  
 
-  const handleChange = (html: string) => {
-    setDescription(html);
-  };
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [visible])
+  
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.notebook}>{name.split(" ")[0]} notebook</div>
-        <div className={styles.deleteBtn} onClick={() => deleteNote()} ><FontAwesomeIcon className={styles.icon} icon={faTrash} /></div>
-      </div>
+    <>
+      {visible && (
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.notebook}>{name.split(" ")[0]} notebook</div>
+            <div className={styles.deleteBtn} onClick={() => deleteNote()}>
+              <FontAwesomeIcon className={styles.icon} icon={faTrash} />
+            </div>
+          </div>
 
-      <div className={styles.body}>
-        <div className={styles.reactQuill}>
-          <ReactQuill
-            modules={modules}
-            theme="snow"
-            placeholder="Start writing, drag files or start from a template"
-            value={description}
-            onChange={handleChange}
-          />
+          <div className={styles.body}>
+            <div className={styles.reactQuill}>
+              <ReactQuill
+                modules={modules}
+                theme="snow"
+                placeholder="Start writing, drag files or start from a template"
+                value={description}
+                onChange={(html: string) => setDescription(html)}
+              />
+            </div>
+            <div className={styles.inputTitle}>
+              <input
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                ref={inputRef}
+              />
+            </div>
+          </div>
         </div>
-        <div className={styles.inputTitle}>
-          <input
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

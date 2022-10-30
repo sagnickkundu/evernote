@@ -1,11 +1,12 @@
 export type User = {
-    name: string;
-    email: string;
-    notes: Notes[];
-  };
+  name: string;
+  email: string;
+  notes: Notes[];
+};
 
-  export type Notes = {
-    id: string;
-    title: string;
-    description: string;
-  }
+export type Notes = {
+  id: string;
+  title: string;
+  description: string;
+  last_modified: string;
+};

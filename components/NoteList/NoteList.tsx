@@ -2,6 +2,8 @@ import { useState } from "react";
 import Link from "next/link";
 import styles from "./NoteList.module.scss";
 import { Notes } from "../../types";
+import moment from "moment";
+
 type NoteListProps = {
   notes: Notes[];
   viewNote(id: string): void;
@@ -9,9 +11,6 @@ type NoteListProps = {
   id: string;
 };
 const NoteList = ({ notes, viewNote, title, id }: NoteListProps) => {
-  const handleChange = (id: string) => {
-    viewNote(id);
-  };
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -29,14 +28,18 @@ const NoteList = ({ notes, viewNote, title, id }: NoteListProps) => {
       <div className={styles.body}>
         {notes.length > 0 ? (
           notes.map((note) => (
-            <div key={note.id} onClick={() => handleChange(note.id)}>
+            <div key={note.id} onClick={() => viewNote(note.id)}>
               <div className={styles.card}>
                 <div className={styles.cardHead}>
                   <div className={styles.cardTitle}>
-                    {note.id === id ? title : note.title}
+                    {id === note.id ? title : note.title}
                   </div>
                 </div>
-                <div className={styles.date}>2 minutes ago</div>
+                <div className={styles.date}>
+                  {id === note.id
+                    ? "Just now"
+                    : moment(note.last_modified).fromNow()}
+                </div>
               </div>
             </div>
           ))

@@ -7,6 +7,8 @@ import { database } from "../../../firebaseConfig";
 import { User } from "../../../types";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import moment from "moment";
 
 type UserProps = {
   user: User;
@@ -14,50 +16,101 @@ type UserProps = {
 };
 
 const NoteDetails = ({ user, userId }: UserProps) => {
+  const [visible, setVisible] = useState(user.notes.length > 0);
   const [notes, setNotes] = useState(user.notes);
-  const [id, setId] = useState("1");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [id, setId] = useState(user.notes.length > 0 ? user.notes[0].id : "");
+  const [title, setTitle] = useState(
+    user.notes.length > 0 ? user.notes[0].title : ""
+  );
+  const [description, setDescription] = useState(
+    user.notes.length > 0 ? user.notes[0].description : ""
+  );
   const userRef = doc(database, "users", userId);
+  moment.updateLocale("en", {
+    relativeTime: {
+      past: (diff) => (diff == "Just now" ? diff : `${diff} ago`),
+      s: "Just now",
+      ss: "Just now",
+      m: "%dm",
+      mm: "%dm",
+      h: "an h",
+      hh: "%dh",
+      d: "a day",
+      dd: "%d days",
+      w: "a week",
+      ww: "%d weeks",
+      M: "a month",
+      MM: "%d months",
+      y: "a year",
+      yy: "%d years",
+    },
+  });
 
-  const viewNote = async (ID: string) => {
+  const saveNote = () => {
     const newNotes = notes.map((obj) => {
       if (obj.id === id) {
-        return { ...obj, title: title, description: description };
+        return {
+          ...obj,
+          title: title,
+          description: description,
+          last_modified: moment().format(),
+        };
       }
       return obj;
     });
-    setNotes(newNotes);
-    const index = newNotes.findIndex((obj) => {
-      return obj.id === ID;
-    });
+    return newNotes;
+  };
+
+  const viewNote = async (ID: string) => {
+    let updatedNotes = saveNote();
+    setNotes(updatedNotes);
     setId(ID);
-    setTitle(notes[index].title);
-    setDescription(notes[index].description);
-    await updateDoc(userRef, {
-      notes: notes,
-    });
+
+    if (id !== ID) {
+      const index = notes.findIndex((obj) => {
+        return obj.id === ID;
+      });
+      setTitle(notes[index].title);
+      setDescription(notes[index].description);
+      await updateDoc(userRef, {
+        notes: updatedNotes,
+      });
+    }
   };
 
   const addNewNote = async () => {
-    setNotes((notes) => [
-      { id: `${notes.length + 1}`, title: "Untitled", description: "" },
-      ...notes,
-    ]);
+    let generatedId = uuidv4();
+    let newNotes = [
+      {
+        id: generatedId,
+        title: "Untitled",
+        description: "",
+        last_modified: moment().format(),
+      },
+      ...saveNote(),
+    ];
+    setId(generatedId);
+    setTitle("");
+    setDescription("");
+    setNotes(newNotes);
+    setVisible(true);
     await updateDoc(userRef, {
-      notes: notes,
+      notes: newNotes,
     });
   };
 
   const deleteNote = async () => {
     const newNotes = notes.filter((obj) => obj.id !== id);
+    if (newNotes.length === 0) {
+      setVisible(false);
+    }
     setNotes(newNotes);
     setTitle(newNotes[0]?.title);
     setDescription(newNotes[0]?.description);
     await updateDoc(userRef, {
       notes: newNotes,
     });
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -66,10 +119,11 @@ const NoteDetails = ({ user, userId }: UserProps) => {
       <Note
         title={title}
         setTitle={setTitle}
-        description={description}
-        setDescription={setDescription}
         name={user.name}
         deleteNote={deleteNote}
+        visible={visible}
+        description={description}
+        setDescription={setDescription}
       />
     </div>
   );
