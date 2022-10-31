@@ -28,8 +28,9 @@ type NoteProps = {
   name: string;
   deleteNote(): void;
   visible: boolean;
+  sort(): void;
 };
-const Note = ({ title, setTitle, name, deleteNote, visible, description, setDescription }: NoteProps) => {
+const Note = ({ title, setTitle, name, deleteNote, visible, description, setDescription, sort }: NoteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   
 
@@ -41,7 +42,7 @@ const Note = ({ title, setTitle, name, deleteNote, visible, description, setDesc
   return (
     <>
       {visible && (
-        <div className={styles.container}>
+        <div className={styles.container} onClick={() => sort()}>
           <div className={styles.header}>
             <div className={styles.notebook}>{name.split(" ")[0]} notebook</div>
             <div className={styles.deleteBtn} onClick={() => deleteNote()}>

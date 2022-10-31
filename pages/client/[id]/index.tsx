@@ -4,7 +4,7 @@ import Sidenavbar from "../../../components/Sidenavbar/Sidenavbar";
 import styles from "../../../styles/Client.module.scss";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebaseConfig";
-import { User } from "../../../types";
+import { User, Notes } from "../../../types";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -67,6 +67,7 @@ const NoteDetails = ({ user, userId }: UserProps) => {
     setId(ID);
 
     if (id !== ID) {
+      // sort(updatedNotes);
       const index = notes.findIndex((obj) => {
         return obj.id === ID;
       });
@@ -112,6 +113,14 @@ const NoteDetails = ({ user, userId }: UserProps) => {
     });
   };
 
+  const sort = () => {
+    let arr = [...notes];
+    arr.sort((a, b) => {
+      return moment(a.last_modified).diff(b.last_modified);
+    });
+    setNotes(arr);
+  }
+
   return (
     <div className={styles.container}>
       <Sidenavbar user={user} addNewNote={addNewNote} />
@@ -124,6 +133,7 @@ const NoteDetails = ({ user, userId }: UserProps) => {
         visible={visible}
         description={description}
         setDescription={setDescription}
+        sort={sort}
       />
     </div>
   );

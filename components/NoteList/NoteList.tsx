@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Link from "next/link";
 import styles from "./NoteList.module.scss";
 import { Notes } from "../../types";
 import moment from "moment";
@@ -11,6 +10,12 @@ type NoteListProps = {
   id: string;
 };
 const NoteList = ({ notes, viewNote, title, id }: NoteListProps) => {
+  const [selected, setSelected] = useState("");
+
+  const handleClick = (id: string) => {
+    setSelected(id !== selected ? id : "");
+    viewNote(id);
+  };
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -28,7 +33,11 @@ const NoteList = ({ notes, viewNote, title, id }: NoteListProps) => {
       <div className={styles.body}>
         {notes.length > 0 ? (
           notes.map((note) => (
-            <div key={note.id} onClick={() => viewNote(note.id)}>
+            <div
+              key={note.id}
+              onClick={() => handleClick(note.id)}
+              className={selected === note.id ? styles.selectedBorder : ""}
+            >
               <div className={styles.card}>
                 <div className={styles.cardHead}>
                   <div className={styles.cardTitle}>
