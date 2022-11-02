@@ -1,18 +1,17 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Login from '../../components/Auth/Login'
-import { doc, collection, getDoc, getDocs } from "firebase/firestore";
+import Head from "next/head";
+import Login from "../../components/Auth/Login";
+import { collection, getDocs } from "firebase/firestore";
 import { database } from "../../firebaseConfig";
 type UserAuth = {
   id: string;
   email: string;
   password: string;
-}
+};
 
 type LoginProps = {
   users: UserAuth[];
-}
-const LoginPage = ({users}: LoginProps) => {
+};
+const LoginPage = ({ users }: LoginProps) => {
   console.log(users);
   return (
     <div>
@@ -21,15 +20,14 @@ const LoginPage = ({users}: LoginProps) => {
         <meta name="description" content="Login page" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Login users={users}/>
+      <Login users={users} />
     </div>
-  )
-}
+  );
+};
 
 export async function getStaticProps() {
   const dbInstance = collection(database, "users");
   let data = await getDocs(dbInstance);
-  // let Idata = await getDoc(doc(database, "users", "shaggy.ricky@gmail.com"));
   return {
     props: {
       users: data.docs.map((item) => ({
@@ -41,4 +39,4 @@ export async function getStaticProps() {
   };
 }
 
-export default LoginPage
+export default LoginPage;

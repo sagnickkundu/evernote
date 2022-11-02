@@ -6,7 +6,7 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebaseConfig";
 import { User, Notes } from "../../../types";
 import { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 
@@ -26,6 +26,7 @@ const NoteDetails = ({ user, userId }: UserProps) => {
     user.notes.length > 0 ? user.notes[0].description : ""
   );
   const userRef = doc(database, "users", userId);
+
   moment.updateLocale("en", {
     relativeTime: {
       past: (diff) => (diff == "Just now" ? diff : `${diff} ago`),
@@ -67,7 +68,6 @@ const NoteDetails = ({ user, userId }: UserProps) => {
     setId(ID);
 
     if (id !== ID) {
-      // sort(updatedNotes);
       const index = notes.findIndex((obj) => {
         return obj.id === ID;
       });
@@ -101,16 +101,20 @@ const NoteDetails = ({ user, userId }: UserProps) => {
   };
 
   const deleteNote = async () => {
+    const index = notes.findIndex((obj) => {
+      return obj.id === id;
+    });
     const newNotes = notes.filter((obj) => obj.id !== id);
     if (newNotes.length === 0) {
       setVisible(false);
+    } else {
+      setTitle(newNotes[index - 1].title);
+      setDescription(newNotes[index - 1].description);
     }
-    setNotes(newNotes);
-    setTitle(newNotes[0]?.title);
-    setDescription(newNotes[0]?.description);
     await updateDoc(userRef, {
       notes: newNotes,
     });
+    setNotes(newNotes);
   };
 
   const sort = () => {
@@ -119,7 +123,7 @@ const NoteDetails = ({ user, userId }: UserProps) => {
       return moment(a.last_modified).diff(b.last_modified);
     });
     setNotes(arr);
-  }
+  };
 
   return (
     <div className={styles.container}>

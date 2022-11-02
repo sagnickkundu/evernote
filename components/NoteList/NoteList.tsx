@@ -10,6 +10,7 @@ type NoteListProps = {
   id: string;
 };
 const NoteList = ({ notes, viewNote, title, id }: NoteListProps) => {
+  console.log(notes);
   const [selected, setSelected] = useState("");
 
   const handleClick = (id: string) => {
