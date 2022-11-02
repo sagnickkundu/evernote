@@ -22,7 +22,49 @@ type UserProps = {
   addNewNote(): void;
 };
 
-const Sidenavbar = ({user, addNewNote}: UserProps) => {
+const Sidenavbar = ({ user, addNewNote }: UserProps) => {
+  const sideList = [
+    {
+      link: "/",
+      icon: faHome,
+      label: "Home",
+    },
+    {
+      link: "/",
+      icon: faStar,
+      label: "Shortcuts",
+    },
+    {
+      link: "/",
+      icon: faNoteSticky,
+      label: "Notes",
+    },
+    {
+      link: "/",
+      icon: faTasks,
+      label: "Tasks",
+    },
+    {
+      link: "/",
+      icon: faBook,
+      label: "Notebooks",
+    },
+    {
+      link: "/",
+      icon: faTags,
+      label: "Tags",
+    },
+    {
+      link: "/",
+      icon: faShareAlt,
+      label: "Shared with me",
+    },
+    {
+      link: "/",
+      icon: faTrash,
+      label: "Trash",
+    },
+  ];
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -47,73 +89,16 @@ const Sidenavbar = ({user, addNewNote}: UserProps) => {
         </div>
         <div className={styles.menuItem}>
           <ul>
-            <li>
-              <Link href="/">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon className={styles.icon} icon={faHome} /> Home
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/dummy-2">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon className={styles.icon} icon={faStar} />
-                  Shortcuts
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/client">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon
-                    className={styles.icon}
-                    icon={faNoteSticky}
-                  />
-                  Notes
-                </div>
-              </Link>
-            </li>
-
-            <li>
-              <Link href="/dummy-3">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon className={styles.icon} icon={faTasks} />
-                  Tasks
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/dummy-4">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon className={styles.icon} icon={faBook} />
-                  Notebooks
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/trash">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon className={styles.icon} icon={faTags} />
-                  Tags
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/dummy-5">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon className={styles.icon} icon={faShareAlt} />
-                  Shared with me
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/dummy-5">
-                <div className={styles.menuIcons}>
-                  <FontAwesomeIcon className={styles.icon} icon={faTrash} />
-                  Trash
-                </div>
-              </Link>
-            </li>
+            {sideList.map((item, idx) => (
+              <li key={idx}>
+                <Link href={item.link}>
+                  <div className={styles.menuIcons}>
+                    <FontAwesomeIcon className={styles.icon} icon={item.icon} />
+                    {item.label}
+                  </div>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
