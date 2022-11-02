@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleDown,
@@ -17,12 +17,14 @@ import {
 import Link from "next/link";
 import styles from "./Sidenavbar.module.scss";
 import { User, Notes } from "../../types";
+import Dropdown from "./Dropdown";
 type UserProps = {
   user: User;
   addNewNote(): void;
 };
 
 const Sidenavbar = ({ user, addNewNote }: UserProps) => {
+  const [drop, setDrop] = useState(false);
   const sideList = [
     {
       link: "/",
@@ -68,12 +70,15 @@ const Sidenavbar = ({ user, addNewNote }: UserProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.profile}>
-          <div className={styles.profileIcon}>A</div>
+        <div className={styles.profile} onClick={() => setDrop(prevState => !prevState)}>
+          <div className={styles.profileIcon}>{user.name.charAt(0)}</div>
           <div className={styles.profileTitle}>
             {user.name}
             <FontAwesomeIcon className={styles.icon} icon={faAngleDown} />
           </div>
+        </div>
+        <div style={{ display: `${drop ? "block" : "none"}` }}>
+          <Dropdown />
         </div>
         <div className={styles.search}>
           <div className={styles.searchBlock}>
