@@ -1,9 +1,8 @@
 import Image from "next/image";
 import styles from "./Login.module.scss";
-import logo from "../../public/primary.svg";
 import Link from "next/link";
 import { useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 
 type UserAuth = {
   id: string;
@@ -16,34 +15,20 @@ type LoginProps = {
 };
 
 const Login = ({ users }: LoginProps) => {
+  const [error, setError] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [visible, setVisible] = useState(true);
   const router = useRouter();
   const handleSubmit = () => {
-    if (visible) {
-      const found = users.some((el) => el.email === email);
-      if (found) {
-        setVisible(false);
-      }
-      else{
-        alert("Email doesn't exist, please sign up to create an account");
-        setEmail("");
-      }
-    }
-    else{
-      const found = users.some((el) => el.password === password);
-      if(found){
-        const id = users.find(x => x.email === email)?.id;
-        router.push(`/client/${id}`);
-      }
-      else{
-        alert("Incorrect Password");
-        setPassword("");
-      }
+    const found = users.some((el) => el.password === password);
+    if (found) {
+      const id = users.find((x) => x.email === email)?.id;
+      router.push(`/client/${id}`);
+    } else {
+      setError(true);
     }
   };
-  return (
+  return ( 
     <div className={styles.container}>
       <div className={styles.formBox}>
         <Image src="/evernote-icon.svg" alt="" width={55} height={55} />
@@ -54,6 +39,7 @@ const Login = ({ users }: LoginProps) => {
           className={styles.input}
           placeholder="Email address or username"
           value={email}
+          onClick={() => setError(false)}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
@@ -61,11 +47,12 @@ const Login = ({ users }: LoginProps) => {
           className={styles.input}
           placeholder="Password"
           value={password}
+          onClick={() => setError(false)}
           onChange={(e) => setPassword(e.target.value)}
-          hidden={visible}
         />
+        <p style={{display: `${error ? "block" : "none"}`}} className={styles.error}>Incorrect email or password</p>
         <button onClick={handleSubmit} className={styles.submit}>
-          {visible ? "Continue" : "Sign in"}
+          Sign in
         </button>
         <div className={styles.remember}>
           <input type="checkbox" />

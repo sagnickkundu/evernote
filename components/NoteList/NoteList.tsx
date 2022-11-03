@@ -2,15 +2,17 @@ import { useState } from "react";
 import styles from "./NoteList.module.scss";
 import { Notes } from "../../types";
 import moment from "moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowDownWideShort, faBars, faClipboard, faFilter } from "@fortawesome/free-solid-svg-icons";
 
 type NoteListProps = {
   notes: Notes[];
   viewNote(id: string): void;
   title: string;
   id: string;
+  display: string;
 };
-const NoteList = ({ notes, viewNote, title, id }: NoteListProps) => {
-  console.log(notes);
+const NoteList = ({ notes, viewNote, title, id, display }: NoteListProps) => {
   const [selected, setSelected] = useState("");
 
   const handleClick = (id: string) => {
@@ -18,16 +20,34 @@ const NoteList = ({ notes, viewNote, title, id }: NoteListProps) => {
     viewNote(id);
   };
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ display: display }}>
       <div className={styles.header}>
         <div className={styles.headerTitle}>
-          <h1>Notes</h1>
+          
+          <h1><FontAwesomeIcon
+            className={styles.icon}
+            icon={faClipboard}
+          />{" "}Notes</h1>
         </div>
         <div className={styles.subHeader}>
           <div className={styles.count}>
             {notes.length > 1
               ? `${notes.length} notes`
               : `${notes.length} note`}
+          </div>
+          <div className={styles.extraOptions}>
+          <FontAwesomeIcon
+            className={styles.icon}
+            icon={faArrowDownWideShort}
+          />
+           <FontAwesomeIcon
+            className={styles.icon}
+            icon={faFilter}
+          />
+           <FontAwesomeIcon
+            className={styles.icon}
+            icon={faBars}
+          />
           </div>
         </div>
       </div>

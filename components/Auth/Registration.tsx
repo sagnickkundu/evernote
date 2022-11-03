@@ -5,28 +5,99 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { addDoc, collection } from "firebase/firestore";
 import { database } from "../../firebaseConfig";
-const Registration = () => {
+type UserAuth = {
+  id: string;
+  email: string;
+  password: string;
+};
+
+type LoginProps = {
+  users: UserAuth[];
+};
+const Registration = ({ users }: LoginProps) => {
+  const [emailError, setEMailError] = useState({
+    status: false,
+    message: "",
+  });
+  const [passwordError, setPasswordError] = useState({
+    status: false,
+    message: "",
+  });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const dbInstance = collection(database, "users");
-  const handleSubmit = async () => {
-    let newUser = {
-      name: name,
-      email: email,
-      password: password,
-      notes: [
-        {
-          id: "1",
-          title: "Untitled",
-          description: "",
-        },
-      ],
-    };
-    await addDoc(dbInstance, newUser).then((docRef) => {
-      router.push(`/client/${docRef.id}`);
+
+  const emailValidate = () => {
+    let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (email === "") {
+      setEMailError({
+        status: true,
+        message: "Email address is a required field.",
+      });
+      return false;
+    }
+    if (!email.match(mailformat)) {
+      setEMailError({
+        status: true,
+        message: "Email address appears to be invalid.",
+      });
+      return false;
+    }
+    const found = users.some((el) => el.email === email);
+    if (found) {
+      setEMailError({
+        status: true,
+        message: "This email address is already in use.",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const passwordValidate = () => {
+    if (password === "") {
+      setPasswordError({
+        status: true,
+        message: "Password is a required field.",
+      });
+      return false;
+    }
+    if (password.length < 4) {
+      setPasswordError({
+        status: true,
+        message: "Select a password between 6 and 64 characters long consisting of letters, numbers and punctuation.",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleClick = () => {
+    setEMailError({
+      status: false,
+      message: "",
     });
+    setPasswordError({
+      status: false,
+      message: "",
+    });
+  };
+  const handleSubmit = async () => {
+    let validate1 = emailValidate();
+    let validate2 = passwordValidate();
+    if (validate1 && validate2) {
+      let newUser = {
+        name: name,
+        email: email,
+        password: password,
+        notes: [],
+      };
+      await addDoc(dbInstance, newUser).then((docRef) => {
+        router.push(`/client/${docRef.id}`);
+      });
+    }
   };
   return (
     <div className={styles.container}>
@@ -46,15 +117,29 @@ const Registration = () => {
           className={styles.input}
           placeholder="Email"
           value={email}
+          onClick={handleClick}
           onChange={(e) => setEmail(e.target.value)}
         />
+        <p
+          style={{ display: `${emailError.status ? "block" : "none"}` }}
+          className={styles.error}
+        >
+          {emailError.message}
+        </p>
         <input
           type="password"
           className={styles.input}
           placeholder="Password"
           value={password}
+          onClick={handleClick}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <p
+          style={{ display: `${passwordError.status ? "block" : "none"}` }}
+          className={styles.error}
+        >
+          {passwordError.message}
+        </p>
         <button onClick={handleSubmit} className={styles.submit}>
           Continue
         </button>

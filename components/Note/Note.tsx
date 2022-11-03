@@ -3,7 +3,11 @@ import styles from "./Note.module.scss";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDownLeftAndUpRightToCenter,
+  faTrash,
+  faUpRightAndDownLeftFromCenter,
+} from "@fortawesome/free-solid-svg-icons";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -29,22 +33,48 @@ type NoteProps = {
   deleteNote(): void;
   visible: boolean;
   sort(): void;
+  maximize(): void;
+  display: string;
 };
-const Note = ({ title, setTitle, name, deleteNote, visible, description, setDescription, sort }: NoteProps) => {
+const Note = ({
+  title,
+  setTitle,
+  name,
+  deleteNote,
+  visible,
+  description,
+  setDescription,
+  sort,
+  maximize,
+  display,
+}: NoteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, [visible])
-  
+  }, [visible]);
 
   return (
     <>
       {visible && (
         <div className={styles.container} onClick={() => sort()}>
           <div className={styles.header}>
-            <div className={styles.notebook}>{name.split(" ")[0]} notebook</div>
+            <div className={styles.notebook}>
+              {display === "block" ? (
+                <FontAwesomeIcon
+                  className={styles.icon}
+                  icon={faUpRightAndDownLeftFromCenter}
+                  onClick={maximize}
+                />
+              ) : (
+                <FontAwesomeIcon
+                  className={styles.icon}
+                  icon={faDownLeftAndUpRightToCenter}
+                  onClick={maximize}
+                />
+              )}
+              {name.split(" ")[0]}&#39;s notebook
+            </div>
             <div className={styles.deleteBtn} onClick={() => deleteNote()}>
               <FontAwesomeIcon className={styles.icon} icon={faTrash} />
             </div>

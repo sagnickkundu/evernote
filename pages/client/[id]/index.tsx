@@ -6,9 +6,10 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebaseConfig";
 import { User } from "../../../types";
 import { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
+import Split from "react-split";
 
 type UserProps = {
   user: User;
@@ -25,7 +26,17 @@ const NoteDetails = ({ user, userId }: UserProps) => {
   const [description, setDescription] = useState(
     user.notes.length > 0 ? user.notes[0].description : ""
   );
+  const [navDisplay, setNavDisplay] = useState("block");
+  const [listDisplay, setListDisplay] = useState("block");
+  const [noteDisplay, setNoteDisplay] = useState("block");
   const userRef = doc(database, "users", userId);
+
+  useEffect(() => {
+    if (window.localStorage.getItem("reload") === "true") {
+      window.localStorage.setItem("reload", "false");
+      window.location.reload();
+    }
+  }, []);
 
   moment.updateLocale("en", {
     relativeTime: {
@@ -125,10 +136,34 @@ const NoteDetails = ({ user, userId }: UserProps) => {
     setNotes(arr);
   };
 
+  const maximize = () => {
+    if (noteDisplay === "block") {
+      setNavDisplay("none");
+      setNoteDisplay("none");
+      setListDisplay("none");
+    } else {
+      setNavDisplay("block");
+      setNoteDisplay("block");
+      setListDisplay("block");
+    }
+  };
+
   return (
-    <div className={styles.container}>
-      <Sidenavbar user={user} addNewNote={addNewNote} />
-      <NoteList notes={notes} viewNote={viewNote} title={title} id={id} />
+    <Split
+      className="split"
+      sizes={[17, 25, 58]}
+      gutterSize={1}
+      minSize={[200,40,90]}
+      maxSize={[400,375]}
+    >
+      <Sidenavbar user={user} addNewNote={addNewNote} display={navDisplay} />
+      <NoteList
+        notes={notes}
+        viewNote={viewNote}
+        title={title}
+        id={id}
+        display={listDisplay}
+      />
       <Note
         title={title}
         setTitle={setTitle}
@@ -138,8 +173,10 @@ const NoteDetails = ({ user, userId }: UserProps) => {
         description={description}
         setDescription={setDescription}
         sort={sort}
+        maximize={maximize}
+        display={noteDisplay}
       />
-    </div>
+    </Split>
   );
 };
 

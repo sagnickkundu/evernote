@@ -1,7 +1,11 @@
 import Head from 'next/head'
+import { useEffect } from 'react';
 import Home from '../components/Home/Home';
 
 const HomePage = () => {
+  useEffect(() => {
+    window.localStorage.setItem("reload", "true");
+  },[])
   return (
     <div>
       <Head>

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleDown,
@@ -6,24 +6,26 @@ import {
   faPlus,
   faStar,
   faTrash,
-  faInfo,
   faHome,
   faNoteSticky,
   faTasks,
   faBook,
   faTags,
   faShareAlt,
+  faGear,
+  faCircleQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import styles from "./Sidenavbar.module.scss";
-import { User, Notes } from "../../types";
+import { User } from "../../types";
 import Dropdown from "./Dropdown";
 type UserProps = {
   user: User;
   addNewNote(): void;
+  display: string;
 };
 
-const Sidenavbar = ({ user, addNewNote }: UserProps) => {
+const Sidenavbar = ({ user, addNewNote, display }: UserProps) => {
   const [drop, setDrop] = useState(false);
   const sideList = [
     {
@@ -68,13 +70,17 @@ const Sidenavbar = ({ user, addNewNote }: UserProps) => {
     },
   ];
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ display: display }}>
       <div className={styles.header}>
-        <div className={styles.profile} onClick={() => setDrop(prevState => !prevState)}>
+        <div
+          className={styles.profile}
+          onClick={() => setDrop((prevState) => !prevState)}
+        >
           <div className={styles.profileIcon}>{user.name.charAt(0)}</div>
           <div className={styles.profileTitle}>
             {user.name}
             <FontAwesomeIcon className={styles.icon} icon={faAngleDown} />
+            <FontAwesomeIcon icon={faGear} />
           </div>
         </div>
         <div style={{ display: `${drop ? "block" : "none"}` }}>
@@ -99,7 +105,7 @@ const Sidenavbar = ({ user, addNewNote }: UserProps) => {
                 <Link href={item.link}>
                   <div className={styles.menuIcons}>
                     <FontAwesomeIcon className={styles.icon} icon={item.icon} />
-                    {item.label}
+                    <p>{item.label}</p>
                   </div>
                 </Link>
               </li>
@@ -109,7 +115,7 @@ const Sidenavbar = ({ user, addNewNote }: UserProps) => {
       </div>
       <div className={styles.footer}>
         <div className={styles.footerContent}>
-          <FontAwesomeIcon className={styles.icon} icon={faInfo} />
+          <FontAwesomeIcon className={styles.icon} icon={faCircleQuestion} />
           Need a little help?
         </div>
       </div>

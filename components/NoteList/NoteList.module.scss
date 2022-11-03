@@ -25,9 +25,18 @@
       }
     }
     .subHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       width: 100%;
       margin: 5px;
       font-size: 14px;
+      .extraOptions{
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        gap: 10px;
+      }
     }
   }
   .body {
@@ -90,6 +99,6 @@
   }
 }
 
-.selectedBorder{
+.selectedBorder {
   border: 1px solid blue;
 }
